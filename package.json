@@ -1,0 +1,20 @@
+{
+  "name": "vsmdm",
+  "version": "1.0.0",
+  "description": "Vite + Vercel Functions + Supabase board app",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "backend": "node server.js",
+    "frontend": "vite --host 127.0.0.1 --port 5173",
+    "build": "vite build",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "@supabase/supabase-js": "^2.57.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite": "^8.1.3"
+  }
+}
