@@ -1121,7 +1121,7 @@ td:nth-child(8) {
     color: #64748b;
     font-size: 12px;
     font-weight: 700;
-    text-align: right;
+    text-align: center;
   }
 
   td:nth-child(6)::before {
@@ -1157,6 +1157,7 @@ td:nth-child(8) {
   }
 
   td:nth-child(8) .deadline-badge {
+    box-sizing: border-box;
     width: 100%;
     min-width: 0;
     height: 30px;
