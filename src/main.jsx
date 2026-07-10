@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Share2 } from 'lucide-react';
 import './styles.css';
 
 const LIMIT = 10;
@@ -1106,8 +1107,8 @@ function App() {
                 <span>{TEXT.star}</span>
                 {TEXT.likeButton} {selectedBoard.likes || 0}
               </button>
-              <button type="button" className="share-button" onClick={handleOpenShare}>
-                {TEXT.share}
+              <button type="button" className="share-button" onClick={handleOpenShare} aria-label={TEXT.share} title={TEXT.share}>
+                <Share2 size={20} strokeWidth={2.2} aria-hidden="true" />
               </button>
             </div>
             <section className="comments">
