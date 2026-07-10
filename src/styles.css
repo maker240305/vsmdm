@@ -1131,6 +1131,8 @@ td:nth-child(8) {
   }
 
   td:nth-child(7) {
+    display: grid;
+    place-items: center;
     grid-column: 3;
     grid-row: 1;
     align-self: center;
