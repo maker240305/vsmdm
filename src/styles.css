@@ -1049,7 +1049,8 @@ td:nth-child(8) {
 
   tr {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr) 112px;
+    grid-template-rows: 30px 22px 30px auto;
     align-items: center;
     gap: 6px 10px;
     margin-bottom: 10px;
@@ -1115,6 +1116,8 @@ td:nth-child(8) {
   td:nth-child(6) {
     grid-column: 3;
     grid-row: 2;
+    align-self: center;
+    justify-self: stretch;
     color: #64748b;
     font-size: 12px;
     font-weight: 700;
@@ -1129,9 +1132,12 @@ td:nth-child(8) {
   td:nth-child(7) {
     grid-column: 3;
     grid-row: 1;
+    align-self: center;
     justify-self: stretch;
+    box-sizing: border-box;
+    height: 30px;
     border-radius: 999px;
-    padding: 4px 8px;
+    padding: 0 8px;
     color: #0f5fb5;
     background: #eff6ff;
     font-size: 12px;
@@ -1142,6 +1148,7 @@ td:nth-child(8) {
   td:nth-child(8) {
     grid-column: 3;
     grid-row: 3;
+    align-self: center;
     justify-self: stretch;
     color: #dc2626;
     font-size: 12px;
@@ -1151,9 +1158,10 @@ td:nth-child(8) {
 
   td:nth-child(8) .deadline-badge {
     width: 100%;
-    min-width: 54px;
-    min-height: 28px;
-    padding: 0 10px;
+    min-width: 0;
+    height: 30px;
+    min-height: 30px;
+    padding: 0 8px;
   }
 
   tr:last-child td,
