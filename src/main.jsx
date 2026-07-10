@@ -71,6 +71,14 @@ const TEXT = {
   likeRanking: '\ubcc4\uc88b\uc544\uc694\u0020\uc21c\uc704',
   star: '\u2605',
   likeButton: '\ubcc4\u0020\uc88b\uc544\uc694',
+  share: '\uacf5\uc720',
+  shareResult: '\ud22c\ud45c\u0020\uacb0\uacfc\u0020\uacf5\uc720',
+  storyImage: '\uc2a4\ud1a0\ub9ac\u0020\uc774\ubbf8\uc9c0',
+  saveImage: '\uc774\ubbf8\uc9c0\u0020\uc800\uc7a5',
+  copyLink: '\ub9c1\ud06c\u0020\ubcf5\uc0ac',
+  copied: '\ubcf5\uc0ac\ub428',
+  nativeShare: '\uacf5\uc720\ud558\uae30',
+  shareFail: '\uacf5\uc720\ub97c\u0020\uc900\ube44\ud558\uc9c0\u0020\ubabb\ud588\uc2b5\ub2c8\ub2e4.',
   id: '\ubc88\ud638',
   total: '\uc804\uccb4',
   count: '\uac1c',
@@ -87,6 +95,83 @@ const TEXT = {
   deleteFail: '\uac8c\uc2dc\uae00\u0020\uc0ad\uc81c\uc5d0\u0020\uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4.',
   likeFail: '\uc88b\uc544\uc694\u0020\ucc98\ub9ac\uc5d0\u0020\uc2e4\ud328\ud588\uc2b5\ub2c8\ub2e4.',
 };
+
+const STORY_WIDTH = 1080;
+const STORY_HEIGHT = 1920;
+
+function drawRoundedRect(context, x, y, width, height, radius, fill) {
+  context.beginPath();
+  context.roundRect(x, y, width, height, radius);
+  context.fillStyle = fill;
+  context.fill();
+}
+
+function drawCenteredStoryText(context, text, x, y, maxWidth, size, color) {
+  let fontSize = size;
+
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillStyle = color;
+
+  while (fontSize > 34) {
+    context.font = `800 ${fontSize}px "Malgun Gothic", Arial, sans-serif`;
+
+    if (context.measureText(text).width <= maxWidth) {
+      break;
+    }
+
+    fontSize -= 2;
+  }
+
+  context.fillText(text, x, y);
+}
+
+function createVoteStoryImage(board) {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+
+  canvas.width = STORY_WIDTH;
+  canvas.height = STORY_HEIGHT;
+
+  context.fillStyle = '#101827';
+  context.fillRect(0, 0, STORY_WIDTH, STORY_HEIGHT);
+
+  drawRoundedRect(context, 52, 52, STORY_WIDTH - 104, STORY_HEIGHT - 104, 42, '#172238');
+  context.fillStyle = '#1976d2';
+  context.fillRect(52, 52, STORY_WIDTH - 104, 14);
+
+  drawCenteredStoryText(context, TEXT.brand, STORY_WIDTH / 2, 186, 720, 78, '#ffffff');
+  drawCenteredStoryText(context, TEXT.matchScore, STORY_WIDTH / 2, 280, 700, 38, '#9dbde1');
+  drawCenteredStoryText(context, board.title || TEXT.board, STORY_WIDTH / 2, 390, 820, 54, '#ffffff');
+
+  const fighterOne = board.fighter1 || TEXT.fighter1;
+  const fighterTwo = board.fighter2 || TEXT.fighter2;
+
+  drawRoundedRect(context, 84, 560, 398, 360, 32, '#eaf3ff');
+  drawRoundedRect(context, 598, 560, 398, 360, 32, '#fff1f3');
+  drawCenteredStoryText(context, TEXT.fighterLabel1, 283, 638, 300, 38, '#1976d2');
+  drawCenteredStoryText(context, fighterOne, 283, 748, 330, 56, '#111827');
+  drawCenteredStoryText(context, `${board.votes1 || 0}${TEXT.count}`, 283, 844, 280, 44, '#1976d2');
+  drawCenteredStoryText(context, TEXT.fighterLabel2, 797, 638, 300, 38, '#e11d48');
+  drawCenteredStoryText(context, fighterTwo, 797, 748, 330, 56, '#111827');
+  drawCenteredStoryText(context, `${board.votes2 || 0}${TEXT.count}`, 797, 844, 280, 44, '#e11d48');
+
+  context.beginPath();
+  context.arc(STORY_WIDTH / 2, 740, 78, 0, Math.PI * 2);
+  context.fillStyle = '#e11d48';
+  context.fill();
+  drawCenteredStoryText(context, 'VS', STORY_WIDTH / 2, 740, 120, 52, '#ffffff');
+
+  drawRoundedRect(context, 156, 1080, 768, 372, 36, '#ffffff');
+  drawCenteredStoryText(context, TEXT.matchScore, STORY_WIDTH / 2, 1170, 500, 40, '#1976d2');
+  drawCenteredStoryText(context, board.match_score || '5:5', STORY_WIDTH / 2, 1310, 620, 154, '#111827');
+  drawCenteredStoryText(context, `${TEXT.totalVotes} ${board.total_votes || 0}${TEXT.count}`, STORY_WIDTH / 2, 1405, 500, 38, '#64748b');
+
+  drawCenteredStoryText(context, TEXT.brand, STORY_WIDTH / 2, 1690, 380, 54, '#ffffff');
+  drawCenteredStoryText(context, 'Vote. Share. Decide.', STORY_WIDTH / 2, 1772, 620, 30, '#9dbde1');
+
+  return canvas.toDataURL('image/png');
+}
 
 function App() {
   const [boards, setBoards] = useState([]);
@@ -114,6 +199,9 @@ function App() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
+  const [shareImage, setShareImage] = useState('');
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const formatDeadlineInput = (value) => {
     if (!value) {
@@ -603,6 +691,61 @@ function App() {
     }
   };
 
+  const getShareUrl = (board) => {
+    return `${window.location.origin}${window.location.pathname}?view=detail&id=${board.id}&page=${page}`;
+  };
+
+  const handleOpenShare = () => {
+    if (!selectedBoard) {
+      return;
+    }
+
+    setShareImage(createVoteStoryImage(selectedBoard));
+    setLinkCopied(false);
+    setIsShareOpen(true);
+  };
+
+  const handleCopyShareLink = async () => {
+    if (!selectedBoard) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(getShareUrl(selectedBoard));
+      setLinkCopied(true);
+    } catch (copyError) {
+      setError(TEXT.shareFail);
+    }
+  };
+
+  const handleNativeShare = async () => {
+    if (!selectedBoard || !shareImage || !navigator.share) {
+      return;
+    }
+
+    try {
+      const imageBlob = await (await fetch(shareImage)).blob();
+      const imageFile = new File([imageBlob], `vsmdm-result-${selectedBoard.id}.png`, { type: 'image/png' });
+      const shareData = {
+        title: selectedBoard.title,
+        text: `${TEXT.brand} ${TEXT.matchScore} ${selectedBoard.match_score || '5:5'}`,
+        url: getShareUrl(selectedBoard),
+        files: [imageFile],
+      };
+
+      if (navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        return;
+      }
+
+      await navigator.share({ title: shareData.title, text: shareData.text, url: shareData.url });
+    } catch (shareError) {
+      if (shareError.name !== 'AbortError') {
+        setError(TEXT.shareFail);
+      }
+    }
+  };
+
   const handleVote = async (id, choice) => {
     const voteKey = `vote:${id}`;
 
@@ -963,6 +1106,9 @@ function App() {
                 <span>{TEXT.star}</span>
                 {TEXT.likeButton} {selectedBoard.likes || 0}
               </button>
+              <button type="button" className="share-button" onClick={handleOpenShare}>
+                {TEXT.share}
+              </button>
             </div>
             <section className="comments">
               <h2>{TEXT.comments}</h2>
@@ -1074,6 +1220,27 @@ function App() {
           </>
         )}
       </section>
+      {isShareOpen && selectedBoard && shareImage && (
+        <div className="share-modal-backdrop" onClick={() => setIsShareOpen(false)}>
+          <section className="share-dialog" role="dialog" aria-modal="true" aria-labelledby="share-dialog-title" onClick={(event) => event.stopPropagation()}>
+            <div className="share-dialog__header">
+              <h2 id="share-dialog-title">{TEXT.shareResult}</h2>
+              <button type="button" className="text-button" onClick={() => setIsShareOpen(false)}>{TEXT.close}</button>
+            </div>
+            <div className="share-preview">
+              <img src={shareImage} alt={`${selectedBoard.title} ${TEXT.matchScore}`} />
+            </div>
+            <div className="share-link">
+              <input value={getShareUrl(selectedBoard)} readOnly aria-label={TEXT.copyLink} />
+            </div>
+            <div className="share-dialog__actions">
+              <a className="secondary-button" href={shareImage} download={`vsmdm-result-${selectedBoard.id}.png`}>{TEXT.saveImage}</a>
+              <button type="button" className="secondary-button" onClick={handleCopyShareLink}>{linkCopied ? TEXT.copied : TEXT.copyLink}</button>
+              {'share' in navigator && <button type="button" className="primary-button" onClick={handleNativeShare}>{TEXT.nativeShare}</button>}
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }

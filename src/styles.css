@@ -542,7 +542,9 @@ h2 {
 
 .detail__footer {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  gap: 10px;
   margin-top: 24px;
 }
 
@@ -568,6 +570,100 @@ h2 {
 .star-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.share-button {
+  min-height: 44px;
+  border: 1px solid #1976d2;
+  border-radius: 8px;
+  padding: 0 18px;
+  color: #ffffff;
+  background: #1976d2;
+  font-weight: 700;
+}
+
+.share-button:hover {
+  background: #0f5fb5;
+}
+
+.share-modal-backdrop {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(15, 23, 42, 0.68);
+}
+
+.share-dialog {
+  width: min(880px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  border: 1px solid #d8e0eb;
+  border-radius: 8px;
+  padding: 20px;
+  background: #ffffff;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.3);
+}
+
+.share-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.share-dialog__header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.share-preview {
+  display: grid;
+  justify-items: center;
+  border: 1px solid #d8e0eb;
+  border-radius: 8px;
+  padding: 16px;
+  background: #f8fafc;
+}
+
+.share-preview img {
+  display: block;
+  width: min(270px, 100%);
+  aspect-ratio: 9 / 16;
+  border-radius: 8px;
+  box-shadow: 0 14px 30px rgba(39, 52, 77, 0.2);
+}
+
+.share-link {
+  margin-top: 14px;
+}
+
+.share-link input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 11px 12px;
+  color: #475569;
+  background: #f8fafc;
+  font-size: 13px;
+}
+
+.share-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.share-dialog__actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
 }
 
 .comments {
@@ -1218,6 +1314,28 @@ td:nth-child(8) {
 
   .comment-form {
     grid-template-columns: 1fr;
+  }
+
+  .share-modal-backdrop {
+    padding: 12px;
+  }
+
+  .share-dialog {
+    max-height: calc(100vh - 24px);
+    padding: 16px;
+  }
+
+  .share-preview img {
+    width: min(250px, 76vw);
+  }
+
+  .share-dialog__actions {
+    flex-direction: column;
+  }
+
+  .share-dialog__actions .primary-button,
+  .share-dialog__actions .secondary-button {
+    width: 100%;
   }
 }
 
